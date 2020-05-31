@@ -3,7 +3,8 @@
             [toucan.models :as models]
             [ring.adapter.jetty :refer [run-jetty]]
             [compojure.api.sweet :refer [api routes]]
-            [event-organizer.user :refer [user-routes]])
+            [event-organizer.user :refer [user-routes]]
+            [event-organizer.event :refer [event-routes]])
   (:gen-class))
 
 (def db-spec
@@ -18,7 +19,8 @@
    :spec "/swagger.json"
    :options {:ui {:validatorUrl nil}
              :data {:info {:version "1.0.0", :title "Event organizer API"}}}})
-(def app (api {:swagger swagger-config} (apply routes user-routes)))
+
+(def app (api {:swagger swagger-config} (apply routes [user-routes event-routes])))
 
 (defn -main
   [& args]
