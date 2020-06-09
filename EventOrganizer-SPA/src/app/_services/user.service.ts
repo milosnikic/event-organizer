@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { User } from '../_models/user';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
-baseUrl = 'http://localhost:3000/users';
+  baseUrl = 'http://localhost:3000/users';
 
-constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-getUser(id: number){
-  return this.http.get(this.baseUrl + '/' + id+'');
-}
+  getUser(id: number) {
+    return this.http.get(this.baseUrl + '/' + id + '');
+  }
 
-register(){}
-
+  register(user: User) {
+    return this.http.post(this.baseUrl, user);
+  }
 }
