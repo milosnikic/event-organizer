@@ -47,6 +47,10 @@
 (defn get-events-handler []
   (ok (db/select Event)))
 
+  ; Get all events for user handler 
+(defn get-user-events-handler [user_id]
+  (ok (db/select Event :user_id user_id)))
+
   ; Update event handler
 (defn update-event-handler [id update-event-req]
   (db/update! Event id update-event-req)
@@ -64,7 +68,10 @@
      (create-event-handler create-event-req))
    (GET "/events/:id" []
      :path-params [id :- s/Int]
-     (get-event-handler id))                                                                                                                  
+     (get-event-handler id))
+   (GET "/events/user/:user_id" []
+     :path-params [user_id :- s/Int]
+     (get-user-events-handler user_id))
    (GET "/events" []
      (get-events-handler))
    (PUT "/events/:id" []

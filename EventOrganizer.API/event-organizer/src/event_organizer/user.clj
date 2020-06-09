@@ -8,13 +8,19 @@
             [ring.util.http-response :refer [created ok not-found]]
             [compojure.api.sweet :refer [POST GET PUT DELETE]]))
 
-; User request schema
+
 (defn valid-username? [name]
   (str/non-blank-with-length? 3 50 name))
 
 (defn valid-password? [password]
   (str/length-in-range? 5 50 password))
 
+; Login request schema
+(s/defschema LoginRequestSchema
+  {:username  s/Str 
+   :password  s/Str })
+  
+; User request schema
 (s/defschema UserRequestSchema
   {:username (s/constrained s/Str valid-username?)
    :password (s/constrained s/Str valid-password?)
@@ -31,32 +37,37 @@
     (not-found)))
 
 
-(defn canonicalize-user-req [user-req]
-  (-> (update user-req :password hashers/derive)
-      (rename-keys {:password :password_hash})))
+; (defn canonicalize-user-req [user-req]
+;   (-> (update user-req :password hashers/derive)
+;       (rename-keys {:password :password_hash})))
 
 ; Create user handler
 (defn create-user-handler [create-user-req]
-  (->> (canonicalize-user-req create-user-req)
-       (db/insert! User)
-       :id
-       id->created))
+  ; (->> (canonicalize-user-req create-user-req)
+  (-> (db/insert! User create-user-req)
+      :id
+      id->created))
 
 ; Get user handler
 (defn get-user-handler [user-id]
   (-> (User user-id)
-      (dissoc :password_hash)
+      ; (dissoc :password_hash)
+      user->response))
+
+; Login user handler
+(defn login-user-handler [username password]
+  (-> (User :username username :password password)
       user->response))
 
 ; Get all users handler
 (defn get-users-handler []
-  (->> (db/select User)
-       (map #(dissoc % :password_hash))
-       ok))
+  (-> (db/select User)
+      ;  (map #(dissoc % :password_hash))
+      ok))
 
 ; Update user handler
 (defn update-user-handler [id update-user-req]
-  (db/update! User id (canonicalize-user-req update-user-req))
+  (db/update! User id  update-user-req)
   (ok))
 
 
@@ -67,7 +78,10 @@
 
 ; User routes
 (def user-routes
-  [(POST "/users" []
+  [(POST "/login" []
+     :body [{:keys [username password]} LoginRequestSchema]
+     (login-user-handler username password))
+   (POST "/users" []
      :body [create-user-req UserRequestSchema]
      (create-user-handler create-user-req))
    (GET "/users/:id" []
