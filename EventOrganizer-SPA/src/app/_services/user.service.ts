@@ -8,6 +8,9 @@ import { User } from '../_models/user';
 export class UserService {
   baseUrl = '/api/users';
   loginUrl = '/api/login';
+
+  loggedUser: number;
+
   constructor(private http: HttpClient) {}
 
   getUser(id: number) {
@@ -24,5 +27,13 @@ export class UserService {
       password,
     };
     return this.http.post(this.loginUrl, loginUser);
+  }
+
+  setUser(userId: number){
+    this.loggedUser = userId;
+  }
+
+  resetUser(){
+    this.loggedUser = null;
   }
 }

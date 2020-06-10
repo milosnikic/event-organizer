@@ -1,4 +1,5 @@
 <div class="container" style="padding-top: 50px !important;">
+  <h1 class="text-center" style="padding-bottom: 50px !important;">Event organizer</h1>
   <div class="row text-center">
     <div class="col-md-4">
       <div class="btn-group">
@@ -64,7 +65,7 @@
         <div class="form-group">
           <label for="title">
             Event title
-            <input type="text" formControlName="title" id="title" name="title">
+            <input type="text" formControlName="title" id="title" name="title" [ngClass]="{error: !newEventForm.valid}">
           </label>
         </div>
         <div class="form-group">
@@ -88,7 +89,7 @@
         <div class="form-group">
           <label for="endDate">
             End date
-              <input type="date" formControlName="endDate" id="endDate" name="endDate">
+              <input type="date" formControlName="endDate" id="endDate" name="endDate" >
             </label>
         </div>
       </form>
@@ -96,7 +97,9 @@
         Add new
       </button>
     </div>
-    <div class="col-md-4"></div>
+    <div class="col-md-4">
+      <span *ngIf="!newEventForm.valid" style="color:red;">* title field is required</span>
+    </div>
   </div>
 </div>
 
