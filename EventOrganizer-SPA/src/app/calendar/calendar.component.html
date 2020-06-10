@@ -1,1 +1,173 @@
-<p>calendar works!</p>
+<div class="container" style="padding-top: 50px !important;">
+  <div class="row text-center">
+    <div class="col-md-4">
+      <div class="btn-group">
+        <div
+          class="btn btn-primary"
+          mwlCalendarPreviousView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
+        >
+          Previous
+        </div>
+        <div
+          class="btn btn-outline-secondary"
+          mwlCalendarToday
+          [(viewDate)]="viewDate"
+        >
+          Today
+        </div>
+        <div
+          class="btn btn-primary"
+          mwlCalendarNextView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
+        >
+          Next
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <h3>{{ viewDate | calendarDate: view + "ViewTitle":"en" }}</h3>
+    </div>
+  </div>
+</div>
+<br />
+<div class="container">
+  <mwl-calendar-month-view
+    [viewDate]="viewDate"
+    [events]="events"
+    [refresh]="refresh"
+    [activeDayIsOpen]="activeDayIsOpen"
+    (dayClicked)="dayClicked($event.day)"
+  >
+  </mwl-calendar-month-view>
+</div>
+
+<!-- Everything you see below is just for the demo, you don't need to include it in your app -->
+
+<div class="container">
+  <br /><br /><br />
+
+
+
+<div class="jumbotron">
+  <div class="row">
+    <h3 class="text-center">
+      Add events
+    </h3>
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+      <form [formGroup]="newEventForm">
+        <div class="form-group">
+          <label for="title">
+            Event title
+            <input type="text" formControlName="title" id="title" name="title">
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="primaryColor">
+            Primary color
+              <input type="color" formControlName="primaryColor" id="primaryColor" name="primaryColor">
+            </label>
+        </div>
+        <div class="form-group">
+          <label for="secondaryColor">
+            Secondary color
+              <input type="color" formControlName="secondaryColor" id="secondaryColor" name="secondaryColor">
+            </label>
+        </div>
+        <div class="form-group">
+          <label for="startDate">
+            Start date
+              <input type="date" formControlName="startDate" id="startDate" name="startDate">
+            </label>
+        </div>
+        <div class="form-group">
+          <label for="endDate">
+            End date
+              <input type="date" formControlName="endDate" id="endDate" name="endDate">
+            </label>
+        </div>
+      </form>
+      <button class="btn btn-primary" [disabled]="!newEventForm.valid" (click)="addEvent()">
+        Add new
+      </button>
+    </div>
+    <div class="col-md-4"></div>
+  </div>
+</div>
+
+<div *ngIf="events.length" class="table-responsive">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Primary color</th>
+        <th>Secondary color</th>
+        <th>Starts at</th>
+        <th>Ends at</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let event of events">
+        <td>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="event.title"
+            (keyup)="refresh.next()"
+            disabled
+          />
+        </td>
+        <td>
+          <input
+            type="color"
+            [(ngModel)]="event.color.primary"
+            (change)="refresh.next()"
+            disabled
+          />
+        </td>
+        <td>
+          <input
+            type="color"
+            [(ngModel)]="event.color.secondary"
+            (change)="refresh.next()"
+            disabled
+          />
+        </td>
+        <td>
+          <input
+            class="form-control"
+            type="date"
+            dateFormat="Y-m-dTH:i"
+            altFormat="F j, Y H:i"
+            placeholder="Not set"
+            disabled
+          />
+        </td>
+        <td>
+          <input
+            class="form-control"
+            type="date"
+            dateFormat="Y-m-dTH:i"
+            altFormat="F j, Y H:i"
+            placeholder="Not set"
+            disabled
+          />
+        </td>
+        <td>
+          <button class="btn btn-danger" (click)="deleteEvent(event)">
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
