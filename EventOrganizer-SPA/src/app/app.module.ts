@@ -4,7 +4,10 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+ 
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
    declarations: [
@@ -14,7 +17,14 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
    imports: [
       HttpClientModule,
       ReactiveFormsModule,
-      BrowserModule
+      BrowserModule,
+      BrowserAnimationsModule,
+      ToastrModule.forRoot(
+         {
+            timeOut: 5000,
+            preventDuplicates: true,
+            positionClass: 'toast-top-left'}
+      )
    ],
    providers: [],
    bootstrap: [

@@ -6,8 +6,8 @@ import { User } from '../_models/user';
   providedIn: 'root',
 })
 export class UserService {
-  baseUrl = 'http://localhost:3000/users';
-
+  baseUrl = '/api/users';
+  loginUrl = '/api/login';
   constructor(private http: HttpClient) {}
 
   getUser(id: number) {
@@ -16,5 +16,13 @@ export class UserService {
 
   register(user: User) {
     return this.http.post(this.baseUrl, user);
+  }
+
+  login(username: string, password: string) {
+    const loginUser = {
+      username,
+      password,
+    };
+    return this.http.post(this.loginUrl, loginUser);
   }
 }
