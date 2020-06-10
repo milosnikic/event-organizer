@@ -8,11 +8,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
  
 import { ToastrModule } from 'ngx-toastr';
+import { AppRoutingModule } from './app-routing.module';
+import { CalendarComponent } from './calendar/calendar.component';
 
 @NgModule({
    declarations: [
       AppComponent,
       LoginComponent,
+      CalendarComponent,
    ],
    imports: [
       HttpClientModule,
@@ -24,7 +27,8 @@ import { ToastrModule } from 'ngx-toastr';
             timeOut: 5000,
             preventDuplicates: true,
             positionClass: 'toast-top-left'}
-      )
+      ),
+      AppRoutingModule
    ],
    providers: [],
    bootstrap: [
