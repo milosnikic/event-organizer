@@ -23,7 +23,7 @@
 
   ; Event create API
 (defn id->created [id]
-  (created (str "/events/" id) {:id id}))
+  (created (str "/api/events/" id) {:id id}))
 
   ; Event get api
 (defn event->response [event]
@@ -63,22 +63,22 @@
 
   ; event routes                                                                                                                                                                                                                    
 (def event-routes
-  [(POST "/events" []
+  [(POST "/api/events" []
      :body [create-event-req EventRequestSchema]
      (create-event-handler create-event-req))
-   (GET "/events/:id" []
+   (GET "/api/events/:id" []
      :path-params [id :- s/Int]
      (get-event-handler id))
-   (GET "/events/user/:user_id" []
+   (GET "/api/events/user/:user_id" []
      :path-params [user_id :- s/Int]
      (get-user-events-handler user_id))
-   (GET "/events" []
+   (GET "/api/events" []
      (get-events-handler))
-   (PUT "/events/:id" []
+   (PUT "/api/events/:id" []
      :path-params [id :- s/Int]
      :body [update-event-req EventRequestSchema]
      (update-event-handler id update-event-req))
-   (DELETE "/events/:id" []
+   (DELETE "/api/events/:id" []
      :path-params [id :- s/Int]
      (delete-event-handler id))])
 

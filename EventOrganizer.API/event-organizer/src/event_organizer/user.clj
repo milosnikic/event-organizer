@@ -37,10 +37,6 @@
     (not-found)))
 
 
-; (defn canonicalize-user-req [user-req]
-;   (-> (update user-req :password hashers/derive)
-;       (rename-keys {:password :password_hash})))
-
 ; Create user handler
 (defn create-user-handler [create-user-req]
   ; (->> (canonicalize-user-req create-user-req)
@@ -78,22 +74,22 @@
 
 ; User routes
 (def user-routes
-  [(POST "/login" []
+  [(POST "/api/login" []
      :body [{:keys [username password]} LoginRequestSchema]
      (login-user-handler username password))
-   (POST "/users" []
+   (POST "/api/users" []
      :body [create-user-req UserRequestSchema]
      (create-user-handler create-user-req))
-   (GET "/users/:id" []
+   (GET "/api/users/:id" []
      :path-params [id :- s/Int]
      (get-user-handler id))
-   (GET "/users" []
+   (GET "/api/users" []
      (get-users-handler))
-   (PUT "/users/:id" []
+   (PUT "/api/users/:id" []
      :path-params [id :- s/Int]
      :body [update-user-req UserRequestSchema]
      (update-user-handler id update-user-req))
-   (DELETE "/users/:id" []
+   (DELETE "/api/users/:id" []
      :path-params [id :- s/Int]
      (delete-user-handler id))])
 
