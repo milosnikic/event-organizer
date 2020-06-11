@@ -12,14 +12,20 @@
                 type="text"
                 formControlName="username"
                 class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && fL.username.errors }"
+                [ngClass]="{ 'is-invalid': fL.username.errors }"
               />
               <div
-                *ngIf="submitted && fL.username.errors"
+                *ngIf="fL.username.errors"
                 class="invalid-feedback"
               >
-                <div *ngIf="fL.username.errors.required">
+                <div [ngClass]="{'text-danger':fL.username.errors.required}" *ngIf="fL.username.errors.required">
                   Username is required
+                </div>
+                <div [ngClass]="{'text-danger':fL.username.errors.minlength}" *ngIf="fL.username.errors.minlength">
+                  Username must be at least 5 characters
+                </div>
+                <div [ngClass]="{'text-danger':fL.username.errors.maxlength}" *ngIf="fL.username.errors.maxlength">
+                  Username must be at most 50 characters
                 </div>
               </div>
             </div>
@@ -29,14 +35,20 @@
                 type="password"
                 formControlName="password"
                 class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && fL.password.errors }"
+                [ngClass]="{ 'is-invalid': fL.password.errors }"
               />
               <div
-                *ngIf="submitted && fL.password.errors"
+                *ngIf="fL.password.errors"
                 class="invalid-feedback"
               >
-                <div *ngIf="fL.password.errors.required">
+                <div [ngClass]="{'text-danger':fL.password.errors.required}" *ngIf="fL.password.errors.required">
                   Password is required
+                </div>
+                <div [ngClass]="{'text-danger':fL.password.errors.minlength}" *ngIf="fL.password.errors.minlength">
+                  Password must be at least 5 characters
+                </div>
+                <div [ngClass]="{'text-danger':fL.password.errors.maxlength}" *ngIf="fL.password.errors.maxlength">
+                  Password must be at most 50 characters
                 </div>
               </div>
             </div>
@@ -55,14 +67,20 @@
                 type="text"
                 formControlName="username"
                 class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && fR.username.errors }"
+                [ngClass]="{ 'is-invalid': fR.username.errors }"
               />
               <div
-                *ngIf="submitted && fR.username.errors"
+                *ngIf="fR.username.errors"
                 class="invalid-feedback"
               >
-                <div *ngIf="fR.username.errors.required">
+                <div [ngClass]="{'text-danger':fR.username.errors.required}" *ngIf="fR.username.errors.required">
                   Username is required
+                </div>
+                <div [ngClass]="{'text-danger':fR.username.errors.minlength}" *ngIf="fR.username.errors.minlength">
+                  Username must be at least 3 characters
+                </div>
+                <div [ngClass]="{'text-danger':fR.username.errors.maxlength}" *ngIf="fR.username.errors.maxlength">
+                  Username must be at most 50 characters
                 </div>
               </div>
             </div>
@@ -72,17 +90,20 @@
                 type="password"
                 formControlName="password"
                 class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && fR.password.errors }"
+                [ngClass]="{ 'is-invalid': fR.password.errors }"
               />
               <div
-                *ngIf="submitted && fR.password.errors"
+                *ngIf="fR.password.errors"
                 class="invalid-feedback"
               >
-                <div *ngIf="fR.password.errors.required">
+                <div [ngClass]="{'text-danger':fR.password.errors.required}" *ngIf="fR.password.errors.required">
                   Password is required
                 </div>
-                <div *ngIf="fR.password.errors.minlength">
+                <div [ngClass]="{'text-danger':fR.password.errors.minlength}" *ngIf="fR.password.errors.minlength">
                   Password must be at least 5 characters
+                </div>
+                <div [ngClass]="{'text-danger':fR.password.errors.maxlength}" *ngIf="fR.password.errors.maxlength">
+                  Password must be at most 50 characters
                 </div>
               </div>
             </div>
@@ -92,14 +113,17 @@
                 type="email"
                 formControlName="email"
                 class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && fR.email.errors }"
+                [ngClass]="{ 'is-invalid': fR.email.errors }"
               />
               <div
-                *ngIf="submitted && fR.email.errors"
+                *ngIf="fR.email.errors"
                 class="invalid-feedback"
               >
-                <div *ngIf="fR.email.errors.required">
+                <div [ngClass]="{'text-danger':fR.email.errors.required}" *ngIf="fR.email.errors.required">
                   Email is required
+                </div>
+                <div [ngClass]="{'text-danger':fR.email.errors.email}" *ngIf="fR.email.errors.email">
+                  Email is not in correct format
                 </div>
               </div>
             </div>
