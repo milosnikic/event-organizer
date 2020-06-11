@@ -24,3 +24,4 @@ rxjs                         6.4.0
     
 psql (PostgreSQL) 10.12 (Ubuntu 10.12-0ubuntu0.18.04.1)
 Node package manager 6.13.4
+Leiningen 2.9.3 on Java 11.0.7 OpenJDK 64-Bit Server VM
