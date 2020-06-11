@@ -1,29 +1,24 @@
 import {
   Component,
   OnInit,
-  ChangeDetectionStrategy,
   ViewChild,
   TemplateRef,
 } from '@angular/core';
 import {
-  startOfDay,
-  endOfDay,
-  subDays,
-  addDays,
-  endOfMonth,
   isSameDay,
   isSameMonth,
-  addHours,
 } from 'date-fns';
 import { Subject } from 'rxjs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   CalendarEvent,
-  CalendarEventAction,
-  CalendarEventTimesChangedEvent,
   CalendarView,
 } from 'angular-calendar';
 import { FormBuilder, Validators } from '@angular/forms';
+import { EventService } from '../_services/event.service';
+import { NotifyService } from '../_services/notify.service';
+import { DatePipe } from '@angular/common';
+import { UserService } from '../_services/user.service';
+import { Router } from '@angular/router';
 
 const colors: any = {
   red: {
@@ -45,16 +40,19 @@ const colors: any = {
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css'],
 })
-export class CalendarComponent {
+export class CalendarComponent implements OnInit{
   @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any>;
 
   newEventForm = this.fb.group({
-    title:['',[Validators.required]],
-    primaryColor:[colors.red.primary],
-    secondaryColor:[colors.red.primary],
-    startDate:[Date.now()],
-    endDate:[Date.now()]
-  })
+    title: [
+      '',
+      [Validators.required, Validators.minLength(3), Validators.maxLength(80)],
+    ],
+    primaryColor: [colors.red.primary],
+    secondaryColor: [colors.blue.primary],
+    startDate: [Date.now()],
+    endDate: [Date.now()],
+  });
 
   view: CalendarView = CalendarView.Month;
 
@@ -68,10 +66,24 @@ export class CalendarComponent {
 
   events: CalendarEvent[] = [];
 
-  activeDayIsOpen: boolean = true;
+  activeDayIsOpen: boolean = false;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private datePipe: DatePipe,
+    private notify: NotifyService,
+    private fb: FormBuilder,
+    private eventService: EventService
+  ) {}
 
+  ngOnInit() {
+    this.eventService.getAllEventsForUser(this.userService.loggedUser).subscribe(
+      (res) => {
+        this.events = res;
+      }
+    );
+  }
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
       if (
@@ -91,20 +103,33 @@ export class CalendarComponent {
     this.event.title = this.newEventForm.get('title').value;
     this.event.color = {
       primary: this.newEventForm.get('primaryColor').value,
-      secondary: this.newEventForm.get('secondaryColor').value
+      secondary: this.newEventForm.get('secondaryColor').value,
     };
     this.event.start = new Date(this.newEventForm.get('startDate').value);
     this.event.end = new Date(this.newEventForm.get('endDate').value);
-
-
-    this.events = [
-      ...this.events,
-      this.event
-    ];
+    
+    this.eventService.addEvent(this.event).subscribe(
+      (res: any) => {
+        this.event.id = res.id;
+        this.notify.showSuccess('Event successfully added!');
+        this.events = [...this.events, this.event];
+      },
+      (err) => {
+        this.notify.showError('Event has not been added!');
+      }
+    );
   }
 
   deleteEvent(eventToDelete: CalendarEvent) {
-    this.events = this.events.filter((event) => event !== eventToDelete);
+    this.eventService.deleteEvent(+eventToDelete.id).subscribe(
+      (res)=>{
+        this.notify.showSuccess('Event successfully deleted!');
+        this.events = this.events.filter((event) => event !== eventToDelete);
+      },
+      (err)=>{
+        this.notify.showError('Event has not been deleted!');
+      }
+    )
   }
 
   setView(view: CalendarView) {
@@ -114,4 +139,9 @@ export class CalendarComponent {
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
   }
+  logout(){
+    this.router.navigate(['']);
+    this.userService.resetUser();
+  }
+
 }

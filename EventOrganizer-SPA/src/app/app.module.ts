@@ -14,7 +14,7 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { FlatpickrModule } from 'angularx-flatpickr';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 @NgModule({
    declarations: [
@@ -43,7 +43,7 @@ import { CommonModule } from '@angular/common';
       ),
       AppRoutingModule
    ],
-   providers: [],
+   providers: [DatePipe],
    bootstrap: [
       AppComponent
    ]

@@ -9,7 +9,7 @@ export class UserService {
   baseUrl = '/api/users';
   loginUrl = '/api/login';
 
-  loggedUser: number;
+  loggedUser: number = null;
 
   constructor(private http: HttpClient) {}
 

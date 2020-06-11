@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { User } from '../_models/user';
 import { UserService } from '../_services/user.service';
 import { NotifyService } from '../_services/notify.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,10 +13,11 @@ export class LoginComponent implements OnInit {
   user: any = {};
   loginForm: FormGroup;
   registerForm: FormGroup;
-  login = false;
+  login = true;
   submitted = false;
 
   constructor(
+    private router: Router,
     private notify: NotifyService,
     private formBuilder: FormBuilder,
     private userService: UserService
@@ -50,15 +51,14 @@ export class LoginComponent implements OnInit {
       this.user.username = this.fR.username.value;
       this.user.password = this.fR.password.value;
       this.user.email = this.fR.email.value;
-      console.log(this.user)
+
       this.userService.register(this.user).subscribe(
         (res) => {
           this.notify.showSuccess('Successfully registered!');
-          console.log(res);
+          this.toggle();
         },
         (err) => {
           this.notify.showError('User with specified username or email already exists!');
-          console.log(err);
         }
       );
     }
@@ -66,13 +66,13 @@ export class LoginComponent implements OnInit {
   loginUser() {
     if(this.loginForm.valid){
       this.userService.login(this.fL.username.value,this.fL.password.value).subscribe(
-        (res)=>{
+        (res: any)=>{
           this.notify.showSuccess('Successfully logged in!');
-          console.log(res)
+          this.userService.setUser(res.id);
+          this.router.navigateByUrl('/calendar', {queryParams : {id:res.id+''}});
         },
         (err)=>{
           this.notify.showError('Check your credentials!');
-          console.log(err)
         }
       )
     }
