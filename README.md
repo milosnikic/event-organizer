@@ -22,6 +22,7 @@ createdb event-organizer
 ```
 Username and password for database are in core.clj file.
 Now let us first run database script. 
+**Database is populated with some predefined users. If you don't want to include them, just comment lines 139,140 and 141 in script "event-organizer.sql".**
 ```bash
 psql -U [username] -d event-organizer -a -f event-organizer.sql
 ```
