@@ -28,6 +28,18 @@ export class EventService {
     return this.http.post(this.baseUrl, data);
   }
 
+  updateEvent(event: any) {
+    const data = {
+      name: event.title,
+      start: this.datePipe.transform(event.start, 'yyyy-MM-dd'),
+      end: this.datePipe.transform(event.end, 'yyyy-MM-dd'),
+      primary: event.color.primary,
+      secondary: event.color.secondary,
+      user_id: this.userService.loggedUser
+    };
+    return this.http.put(this.baseUrl + '/' + this.userService.loggedUser, data);
+  }
+
   deleteEvent(eventId: number){
     return this.http.delete(this.baseUrl + '/' + eventId);
   }
@@ -39,6 +51,10 @@ export class EventService {
         map((events: any[])=>{
           return events.map((event: any) => ({
             ...event,
+            color :{
+              primary: event.primary,
+              secondary: event.secondary
+            },
             title: event.name,
             start: new Date(event.start),
             end: new Date(event.end),

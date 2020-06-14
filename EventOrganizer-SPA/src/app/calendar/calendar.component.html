@@ -94,8 +94,11 @@
             </label>
         </div>
       </form>
-      <button class="btn btn-primary" [disabled]="!newEventForm.valid" (click)="addEvent()">
+      <button *ngIf="!edit" class="btn btn-primary" [disabled]="!newEventForm.valid" (click)="addEvent()">
         Add new
+      </button>
+      <button *ngIf="edit" class="btn btn-secondary" [disabled]="!newEventForm.touched" (click)="updateEvent()">
+        Update
       </button>
     </div>
     <div class="col-md-4">
@@ -112,6 +115,7 @@
         <th>Starts at</th>
         <th>Ends at</th>
         <th>Remove</th>
+        <th>Edit</th>
       </tr>
     </thead>
 
@@ -146,6 +150,14 @@
             Delete
           </button>
         </td>
+        <td>
+          <button class="btn btn-info" (click)="editEvent(event)">
+            Edit 
+          </button>
+        </td>
+        <!-- <div>
+          <pre>{{event | json}}</pre>
+        </div> -->
       </tr>
     </tbody>
   </table>

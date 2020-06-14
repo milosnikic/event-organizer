@@ -1,18 +1,7 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  TemplateRef,
-} from '@angular/core';
-import {
-  isSameDay,
-  isSameMonth,
-} from 'date-fns';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { isSameDay, isSameMonth } from 'date-fns';
 import { Subject } from 'rxjs';
-import {
-  CalendarEvent,
-  CalendarView,
-} from 'angular-calendar';
+import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { FormBuilder, Validators } from '@angular/forms';
 import { EventService } from '../_services/event.service';
 import { NotifyService } from '../_services/notify.service';
@@ -40,7 +29,7 @@ const colors: any = {
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css'],
 })
-export class CalendarComponent implements OnInit{
+export class CalendarComponent implements OnInit {
   @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any>;
 
   newEventForm = this.fb.group({
@@ -68,6 +57,8 @@ export class CalendarComponent implements OnInit{
 
   activeDayIsOpen: boolean = false;
 
+  edit:boolean = false;
+
   constructor(
     private router: Router,
     private userService: UserService,
@@ -78,11 +69,11 @@ export class CalendarComponent implements OnInit{
   ) {}
 
   ngOnInit() {
-    this.eventService.getAllEventsForUser(this.userService.loggedUser).subscribe(
-      (res) => {
+    this.eventService
+      .getAllEventsForUser(this.userService.loggedUser)
+      .subscribe((res) => {
         this.events = res;
-      }
-    );
+      });
   }
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -107,7 +98,6 @@ export class CalendarComponent implements OnInit{
     };
     this.event.start = new Date(this.newEventForm.get('startDate').value);
     this.event.end = new Date(this.newEventForm.get('endDate').value);
-    
     this.eventService.addEvent(this.event).subscribe(
       (res: any) => {
         this.event.id = res.id;
@@ -120,17 +110,60 @@ export class CalendarComponent implements OnInit{
     );
   }
 
+  updateEvent():void {
+    this.event.title = this.newEventForm.get('title').value;
+    this.event.color = {
+      primary: this.newEventForm.get('primaryColor').value,
+      secondary: this.newEventForm.get('secondaryColor').value,
+    };
+    this.event.start = new Date(this.newEventForm.get('startDate').value);
+    this.event.end = new Date(this.newEventForm.get('endDate').value);
+    this.eventService.updateEvent(this.event).subscribe(
+      (res: any) => {
+        this.notify.showSuccess('Event successfully updated!');
+        this.events = this.events.filter(e => e.id !== this.event.id);
+        this.events = [...this.events, this.event];
+        this.edit = false;
+        this.newEventForm.reset();
+        this.event = {};
+      },
+      (err) => {
+        this.notify.showError('Event has not been updated!');
+      }
+    );
+  }
+
   deleteEvent(eventToDelete: CalendarEvent) {
     this.eventService.deleteEvent(+eventToDelete.id).subscribe(
-      (res)=>{
+      (res) => {
         this.notify.showSuccess('Event successfully deleted!');
         this.events = this.events.filter((event) => event !== eventToDelete);
       },
-      (err)=>{
+      (err) => {
         this.notify.showError('Event has not been deleted!');
       }
-    )
+    );
   }
+
+  editEvent(eventToUpdate: any) {
+    this.newEventForm.controls['primaryColor'].setValue(
+      eventToUpdate.color.primary
+    );
+    this.newEventForm.controls['secondaryColor'].setValue(
+      eventToUpdate.color.secondary
+    );
+    this.newEventForm.controls['title'].setValue(eventToUpdate.title);
+    this.newEventForm.controls['startDate'].setValue(
+      this.datePipe.transform(eventToUpdate.start, 'yyyy-MM-dd')
+    );
+    this.newEventForm.controls['endDate'].setValue(
+      this.datePipe.transform(eventToUpdate.end, 'yyyy-MM-dd')
+    );
+    this.edit = true;
+    this.event = eventToUpdate;
+    console.log(eventToUpdate);
+  }
+
 
   setView(view: CalendarView) {
     this.view = view;
@@ -139,9 +172,8 @@ export class CalendarComponent implements OnInit{
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
   }
-  logout(){
+  logout() {
     this.router.navigate(['']);
     this.userService.resetUser();
   }
-
 }
